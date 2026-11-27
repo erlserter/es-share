@@ -8,7 +8,7 @@
 [![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-Components-000000?style=for-the-badge&logo=shadcnui&logoColor=white)](https://ui.shadcn.com/)
 [![macOS & Windows](https://img.shields.io/badge/Platform-macOS%20%E2%86%94%20Windows-10B981?style=for-the-badge)](https://github.com/erlserter/es-share)
 
-A lightweight software KVM with a modern web dashboard that lets you share a single keyboard and mouse between **Mac (Main PC) ↔ Windows** over your local network (Wi-Fi / Ethernet).
+A lightweight software KVM with a modern web dashboard that lets you share a single keyboard and mouse between **Mac (Main PC) ↔ Windows (Target PC)** over your local network (Wi-Fi / Ethernet).
 
 ## Features
 
@@ -22,66 +22,77 @@ A lightweight software KVM with a modern web dashboard that lets you share a sin
 
 ---
 
-## Requirements
+## Downloads
 
-- **Python 3.10+** (on both Mac and Windows)
-- **Node.js 20+** *(only needed if rebuilding the `ui/` frontend)*
+| Role | Platform | Download |
+| :--- | :--- | :--- |
+| **Main PC (Server)** | macOS (Apple Silicon / Intel) | [Download Source ZIP](https://github.com/erlserter/es-share/archive/refs/heads/main.zip) |
+| **Target PC (Client)** | Windows 10 / 11 | [Download Source ZIP](https://github.com/erlserter/es-share/archive/refs/heads/main.zip) · [Latest Releases (`.exe`)](https://github.com/erlserter/es-share/releases/latest) |
 
 ---
 
-## Quick Start
+## Setup Guide
 
-### 1. Mac (Main PC / Server)
+### 1. Main PC — Mac (Server)
+> Use this on the Mac where your keyboard and mouse are physically connected.
 
-```bash
-git clone https://github.com/erlserter/es-share.git
-cd es-share
+1. **Download & Extract** the [Source ZIP](https://github.com/erlserter/es-share/archive/refs/heads/main.zip) (or clone via Git):
+   ```bash
+   git clone https://github.com/erlserter/es-share.git
+   cd es-share
+   ```
+2. **Install Python dependencies & build the web UI:**
+   ```bash
+   python3 -m venv .venv
+   .venv/bin/pip install -r requirements.txt
 
-python3 -m venv .venv
-.venv/bin/pip install -r requirements.txt
+   cd ui && npm install && npm run build && cd ..
+   ```
+3. **Launch ES-Share:**
+   - Double-click **`Mac_Baslat.command`** *(recommended — opens in `Terminal.app` so macOS Accessibility permissions are inherited cleanly)*, or
+   - Run directly from Terminal:
+     ```bash
+     .venv/bin/python app.py
+     ```
+4. Open **`http://127.0.0.1:8765`**, click **Sunucuyu Başlat**, and copy your Mac's local IP address.
 
-# Build the web dashboard
-cd ui && npm install && npm run build && cd ..
-```
+---
 
-Start the server:
-- Double-click **`Mac_Baslat.command`** *(recommended on macOS — launches inside `Terminal.app` so Accessibility permissions are inherited cleanly)*, or
-- Run from Terminal:
-  ```bash
-  .venv/bin/python app.py
-  ```
+### 2. Target PC — Windows (Client)
+> Use this on the Windows machine you want to control from your Mac.
 
-Open **`http://127.0.0.1:8765`**, click **Sunucuyu Başlat** (Start Server), and note your Mac's local IP address.
+#### Option A: Run with Python (Full or Minimal Files)
+You can download the [Source ZIP](https://github.com/erlserter/es-share/archive/refs/heads/main.zip) or copy only the required Python files to a folder on Windows:
+- **Standard (`app.py`):** `app.py`, `client.py`, `server.py`, `protocol.py`, `clipboard_sync.py`, `web_ui.py`, `requirements.txt` *(plus `ui/dist/` if you want the local web UI on Windows)*
+- **Headless 3-file minimum:** `client.py`, `protocol.py`, `clipboard_sync.py`
 
-### 2. Windows (Connected Device / Client)
-
-Copy the repository to your Windows machine and install the Python dependency:
-
+Install the dependency once:
 ```bat
 pip install -r requirements.txt
 ```
 
+Connect to your Mac:
 - **With Web Dashboard:**
   ```bat
   python app.py
   ```
   Switch to the **Windows (Client)** tab, enter your Mac's IP address, and click **Mac'e Bağlan**. You can also drag and drop files/images in this tab to send them to your Mac.
-
 - **Direct CLI Mode:**
   ```bat
   python app.py client --host <MAC_IP_ADDRESS>
   ```
+- **3-file Minimal One-Liner:**
+  ```bat
+  python -c "from client import KVMClient; c = KVMClient('<MAC_IP_ADDRESS>', on_status=print); c.start(); input('Press Enter to stop...')"
+  ```
 
-### Building a Standalone Windows `.exe` (Optional)
-
-On a Windows machine with Python installed, double-click `build_windows.bat` or run:
-
-```bat
-python -m pip install -r requirements.txt pyinstaller
-python -m PyInstaller --onefile --name ES-Share --add-data "ui\dist;ui\dist" --hidden-import=pynput.keyboard._win32 --hidden-import=pynput.mouse._win32 app.py
-```
-
-The standalone executable will be generated at `dist\ES-Share.exe`.
+#### Option B: Standalone Windows `.exe` (No Python Needed on Target)
+- Download **`ES-Share.exe`** from [GitHub Releases](https://github.com/erlserter/es-share/releases/latest) (if published), **or** build it once on any Windows PC with Python by double-clicking **`build_windows.bat`**:
+  ```bat
+  python -m pip install -r requirements.txt pyinstaller
+  python -m PyInstaller --onefile --name ES-Share --add-data "ui\dist;ui\dist" --hidden-import=pynput.keyboard._win32 --hidden-import=pynput.mouse._win32 app.py
+  ```
+  This outputs a single portable **`dist\ES-Share.exe`** you can copy to any Windows machine.
 
 ---
 
