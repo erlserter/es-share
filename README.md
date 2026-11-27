@@ -1,29 +1,37 @@
 # ES-Share
 
-Tek bir klavye ve fareyi aynı yerel ağ (Wi-Fi / Ethernet) üzerinden **Mac (Ana PC) ↔ Windows** arasında paylaşmanızı sağlayan hafif, modern web arayüzlü yazılım KVM aracı.
+[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-6-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vite.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-Components-000000?style=for-the-badge&logo=shadcnui&logoColor=white)](https://ui.shadcn.com/)
+[![macOS & Windows](https://img.shields.io/badge/Platform-macOS%20%E2%86%94%20Windows-10B981?style=for-the-badge)](https://github.com/erlserter/es-share)
 
-## Özellikler
+A lightweight software KVM with a modern web dashboard that lets you share a single keyboard and mouse between **Mac (Main PC) ↔ Windows** over your local network (Wi-Fi / Ethernet).
 
-- **Tek Klavye & Fare Paylaşımı:** Düşük gecikmeli TCP (`TCP_NODELAY`) aktarımı ve çözünürlükten bağımsız göreceli fare hareketi.
-- **Akıllı Kenar Geçişi & İmleç Kilidi:** Fareyi ekranın sağ/sol kenarına götürerek Mac ↔ Windows arasında otomatik geçiş yapın; Windows kontrolündeyken Mac imleci sabit kalır.
-- **Acil Dönüş Kısayolları:** `Ctrl + Alt + S` veya 1 saniye içinde `3× Esc` ile anında Mac'e geri dönün.
-- **Otomatik Tuş Eşleme:** Mac `Cmd` ↔ Windows `Ctrl` eşlemesi (kopyala/yapıştır kısayolları için) ve cihaz değişiminde takılı tuş koruması.
-- **Çift Yönlü Ortak Pano (Copy–Paste):** Harici paket gerektirmeden Mac (`pbcopy`/`pbpaste`) ve Windows (`ctypes` Win32 Clipboard) arasında metin senkronizasyonu.
-- **Sürükle–Bırak Dosya Transferi:** Web arayüzü üzerinden dosya ve görselleri doğrudan karşı bilgisayarın `~/Downloads/ES-Share` klasörüne gönderin.
-- **Modern Web Arayüzü (`shadcn/ui`):** React + TypeScript + Tailwind CSS v4 ile görsel masaüstü tuvali, karanlık/aydınlık tema ve canlı günlük paneli.
+## Features
+
+- **Single Keyboard & Mouse Sharing:** Low-latency TCP (`TCP_NODELAY`) input streaming with resolution-independent relative mouse deltas.
+- **Smart Edge Switching & Cursor Lock:** Move your cursor across the shared screen edge to switch between Mac and Windows automatically; the Mac cursor stays locked in place while controlling Windows.
+- **Instant Return Shortcuts:** Press `Ctrl + Alt + S` or tap `Esc` 3 times within 1 second (`3× Esc`) to jump back to Mac anytime.
+- **Automatic Key Mapping:** Maps Mac `Cmd` ↔ Windows `Ctrl` shortcuts automatically and releases held keys when switching or disconnecting.
+- **Bidirectional Clipboard Sync (Copy–Paste):** Zero-dependency plain-text clipboard sync between Mac (`pbcopy`/`pbpaste`) and Windows (`ctypes` Win32 Clipboard API).
+- **Drag-and-Drop File Transfer:** Drop files or images directly onto the monitor cards in the web UI to send them to `~/Downloads/ES-Share` on the target computer.
+- **Modern `shadcn/ui` Dashboard:** Visual dual-display desk canvas with live status badges, theme toggle (`light`/`dark`), and real-time activity logs.
 
 ---
 
-## Gereksinimler
+## Requirements
 
-- **Python 3.10+** (Mac ve Windows)
-- **Node.js 20+** *(yalnızca web arayüzünü `ui/` içinden yeniden derlemek isterseniz)*
+- **Python 3.10+** (on both Mac and Windows)
+- **Node.js 20+** *(only needed if rebuilding the `ui/` frontend)*
 
 ---
 
-## Kurulum
+## Quick Start
 
-### 1. Mac (Ana Bilgisayar / Server)
+### 1. Mac (Main PC / Server)
 
 ```bash
 git clone https://github.com/erlserter/es-share.git
@@ -32,58 +40,60 @@ cd es-share
 python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
 
-# Web arayüzünü derleyin
+# Build the web dashboard
 cd ui && npm install && npm run build && cd ..
 ```
 
-Başlatmak için:
-- Masaüstündeki / klasördeki **`Mac_Baslat.command`** dosyasına çift tıklayın *(önerilen — Terminal üzerinden açıldığı için Erişilebilirlik iznini temiz şekilde devralır)*, veya
-- Terminal'den çalıştırın:
+Start the server:
+- Double-click **`Mac_Baslat.command`** *(recommended on macOS — launches inside `Terminal.app` so Accessibility permissions are inherited cleanly)*, or
+- Run from Terminal:
   ```bash
   .venv/bin/python app.py
   ```
 
-Tarayıcınızda **`http://127.0.0.1:8765`** açılır. **Sunucuyu Başlat**'a basın ve ekranda görünen yerel IP adresinizi not alın.
+Open **`http://127.0.0.1:8765`**, click **Sunucuyu Başlat** (Start Server), and note your Mac's local IP address.
 
-### 2. Windows (Bağlanan Cihaz / Client)
+### 2. Windows (Connected Device / Client)
 
-Klasörü Windows makinenize alın ve bağımlılığı kurun:
+Copy the repository to your Windows machine and install the Python dependency:
 
 ```bat
 pip install -r requirements.txt
 ```
 
-- **Web arayüzü ile:**
+- **With Web Dashboard:**
   ```bat
   python app.py
   ```
-  **Windows — Bağlanan Cihaz (Client)** sekmesine Mac'in IP adresini yazıp **Mac'e Bağlan**'a basın. Aynı sekmeden Mac'e sürükle–bırak ile dosya/görsel gönderebilirsiniz.
+  Switch to the **Windows (Client)** tab, enter your Mac's IP address, and click **Mac'e Bağlan**. You can also drag and drop files/images in this tab to send them to your Mac.
 
-- **Komut satırından doğrudan bağlanmak için:**
+- **Direct CLI Mode:**
   ```bat
-  python app.py client --host <MAC_IP_ADRESI>
+  python app.py client --host <MAC_IP_ADDRESS>
   ```
 
-### Windows `.exe` Oluşturma (Opsiyonel)
+### Building a Standalone Windows `.exe` (Optional)
 
-Python kurulu bir Windows makinede tek `.exe` üretmek için `build_windows.bat` dosyasına çift tıklayabilir veya şu komutları çalıştırabilirsiniz:
+On a Windows machine with Python installed, double-click `build_windows.bat` or run:
 
 ```bat
 python -m pip install -r requirements.txt pyinstaller
 python -m PyInstaller --onefile --name ES-Share --add-data "ui\dist;ui\dist" --hidden-import=pynput.keyboard._win32 --hidden-import=pynput.mouse._win32 app.py
 ```
 
----
-
-## İzinler ve Güvenlik Notu
-
-- **macOS İzinleri:** İlk çalıştırmada **Sistem Ayarları > Gizlilik ve Güvenlik > Erişilebilirlik** altından **Terminal** (ve Homebrew Python kullanıyorsanız **Python.app**) için izin verin.
-- **Windows Güvenlik Duvarı:** İlk bağlantıda sorulursa **Özel Ağlar** için erişime izin verin (varsayılan port: `24800`).
-- **Ağ Güvenliği:** ES-Share yerel ağ içi kullanım için tasarlanmıştır ve TCP trafiği şifresizdir. Yalnızca güvendiğiniz yerel ağlarda (ev/ofis Wi-Fi) kullanın.
+The standalone executable will be generated at `dist\ES-Share.exe`.
 
 ---
 
-## Testler
+## Permissions & Security
+
+- **macOS Accessibility:** On first run, grant permission under **System Settings > Privacy & Security > Accessibility** for **Terminal** (and **Python.app** if using Homebrew Python).
+- **Windows Firewall:** Allow access on **Private networks** when prompted (default port: `24800`).
+- **Network Security:** ES-Share is designed for trusted local networks (home/office Wi-Fi) and uses unencrypted TCP sockets. Do not expose port `24800` to the public internet.
+
+---
+
+## Tests
 
 ```bash
 .venv/bin/python -m unittest discover -s tests -v
