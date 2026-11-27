@@ -1,0 +1,16 @@
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+build/
+dist/
+*.egg-info/
+
+# Frontend
+ui/node_modules/
+ui/dist/
+
+# OS / Editor
+.DS_Store
+*.log
